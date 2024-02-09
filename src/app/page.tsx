@@ -22,7 +22,7 @@ export default function Home() {
         <Link
           href={"/dashboard"}
           target="_blank"
-          className={buttonVariants({ variant: "ghost", size: "sm" })}
+          className={buttonVariants({ variant: "default", size: "sm" }) }
         >
           Get Started <ArrowRight />
         </Link>
