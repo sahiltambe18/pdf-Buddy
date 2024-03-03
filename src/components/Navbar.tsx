@@ -15,12 +15,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import Image from "next/image";
 import { buttonVariants } from "./ui/button";
 import { ArrowRight } from "lucide-react";
+import { signIn } from 'next-auth/react'
 
 export default function NavigationMenuDemo() {
   return (
     <MaxWidthWraapper className="flex justify-center">
       <NavigationMenu>
-        <NavigationMenuList className=" w-[40rem] flex justify-between px-5  font-semibold">
+        <NavigationMenuList className=" w-[45rem] flex justify-between px-5  font-semibold">
           <NavigationMenuItem>
             <Image
               src={"/jarvis.png"}
@@ -30,10 +31,10 @@ export default function NavigationMenuDemo() {
               quality={100}
             />
           </NavigationMenuItem>
-          <div className="flex w-64 justify-between">
+          <div className="flex w-80 justify-between">
             <NavigationMenuItem className={buttonVariants({variant:"underline" })} >Pricing</NavigationMenuItem>
-            <NavigationMenuItem className={buttonVariants({variant:"underline" })} >Sign-in</NavigationMenuItem>
-            <NavigationMenuItem className={buttonVariants({variant:"underline" })} >Get Started <ArrowRight className="hover:animate-bounce" /> </NavigationMenuItem>
+            <NavigationMenuItem className={buttonVariants({variant:"underline" })} onClick={()=>{signIn()}} >Sign-in</NavigationMenuItem>
+            <NavigationMenuItem className={buttonVariants({variant:"underline" })} >Get Started <ArrowRight className="hover:animate-pulse hover:duration-1000" /> </NavigationMenuItem>
           </div>
         </NavigationMenuList>
       </NavigationMenu>

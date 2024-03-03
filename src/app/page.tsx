@@ -7,7 +7,7 @@ import Image from "next/image";
 export default function Home() {
   return (
     <>
-      <MaxWidthWraapper className="mb-12 mt-28 sm:mt-40 flex flex-col items-center justify-center text-center">
+      <MaxWidthWraapper className="mb-12 mt-28 sm:mt-28 flex flex-col items-center justify-center text-center">
         <div className="mx-auto mb-4 flex max-w-fit items-center justify-center space-x-2 overflow-hidden rounded-full border border-gray-200 bg-white px-7 py-2 shadow-md backdrop-blur transition-all hover:border-gray-300 hover:bg-white/50">
           <p className="text-sm font-semibold text-gray-700">Your Jarvis</p>
         </div>
@@ -43,7 +43,7 @@ export default function Home() {
           </div>
           <div>
             <div className="mx-auto max-w-6xl px-6 lg:px-8">
-              <div className="mt-16 flow-root sm:mt-24">
+              <div className="mt-16 flow-root sm:mt-44">
                 <div className="-m-2 rounded-xl bg-gray-900/5 p-2 ring-inset ring-gray-900/10 lg:-m-4 lg:rounded-2xl lg:p-4">
                   <Image
                     src={"/dashboard-preview.jpg"}
