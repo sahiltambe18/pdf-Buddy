@@ -9,7 +9,7 @@ const page = async () => {
     }
     
   return (
-    <div>page</div>
+    <div>dashboard</div>
   )
 }
 

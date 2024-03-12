@@ -4,7 +4,7 @@ import './globals.css'
 import { cn } from '@/lib/utils'
 import Navbar from '@/components/Navbar'
 
-
+import Provider from '@/components/Provider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -20,10 +20,13 @@ export default function RootLayout({
 }) {
   return (
     <html  lang="en" className='light'>
+      <Provider>
+
       <body className={ cn('min-h-screen font-sans antialiased grains', inter.className)} >
         <Navbar />
         {children}
         </body>
+      </Provider>
     </html>
   )
 }
