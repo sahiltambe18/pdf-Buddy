@@ -21,7 +21,7 @@ export default function NavigationMenuDemo() {
   return (
     <MaxWidthWraapper className="flex justify-center">
       <NavigationMenu>
-        <NavigationMenuList className=" w-[45rem] flex justify-between px-5  font-semibold">
+        <NavigationMenuList className=" sm:w-[50rem] flex justify-between px-5 font-semibold">
           <NavigationMenuItem>
             <Image
               src={"/jarvis.png"}
@@ -31,7 +31,7 @@ export default function NavigationMenuDemo() {
               quality={100}
             />
           </NavigationMenuItem>
-          <div className="flex w-80 justify-between">
+          <div className="flex w-80 text-xs justify-between">
             <NavigationMenuItem className={buttonVariants({variant:"underline" })} >Pricing</NavigationMenuItem>
             <NavigationMenuItem className={buttonVariants({variant:"underline" })} onClick={()=>{signIn()}} >Sign-in</NavigationMenuItem>
             <NavigationMenuItem className={buttonVariants({variant:"underline" })} >Get Started <ArrowRight className="hover:animate-pulse hover:duration-1000" /> </NavigationMenuItem>
