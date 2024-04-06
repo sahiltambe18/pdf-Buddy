@@ -10,15 +10,38 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url = env("DATABASE_URL") // uses connection pooling
+  url      = env("DATABASE_URL") // uses connection pooling
 }
 
 model User {
-  id  String @id 
+  id    String @id
   email String @unique
+
+  File File[]
 
   stripeCustomerId       String?   @unique @map(name: "stripe_customer_id")
   stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id")
   stripePriceId          String?   @map(name: "stripe_price_id")
   stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
+}
+
+enum Status {
+  PENDING
+  PROCESSING
+  FAILED
+  SUCCESS
+}
+
+model File {
+  id           String @id @unique @default(cuid())
+  name         String
+  UploadStatus Status @default(PENDING)
+
+  url String
+  key String
+
+  createAt  DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User?    @relation(fields: [userId], references: [id])
+  userId    String?
 }

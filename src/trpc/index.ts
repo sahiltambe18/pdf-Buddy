@@ -1,12 +1,13 @@
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
-import { publicProcedure, router } from './trpc';
+import { privateProcedure, publicProcedure, router  } from './trpc';
 
 import { TRPCError } from '@trpc/server';
 import prisma from '../../prisma';
 import { ConnectToDatabase } from '@/helpers/db';
 import { randomUUID } from 'crypto';
+import { z } from 'zod'
 
 export const appRouter = router({
   
@@ -46,7 +47,43 @@ export const appRouter = router({
       prisma.$disconnect
     }
     
+  }),
+
+  getUserFiles: privateProcedure.query( async ({ctx})=>{
+    const {user , email} = ctx;
+
+    return await prisma.file.findMany({
+      where:{
+        User:{
+          email:email
+        }
+      }
+    });
+
+  }),
+  deleteFile: privateProcedure.input(z.object({
+    id:z.string()
+  }) ).mutation( async({ctx , input})=>{
+    const {email , user} = ctx;
+    const file = await prisma.file.findFirst({
+      where:{
+        id:input.id,
+        User:{
+          email:email
+        }
+      }
+    });
+
+    if(!file){
+      throw new TRPCError({code:'NOT_FOUND'});
+    }
+
+    await prisma.file.delete({where:{id:input.id}});
+
+    return file;
+
   })
+
 });
  
 // Export type router type signature,
