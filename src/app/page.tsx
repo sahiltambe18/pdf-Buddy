@@ -21,7 +21,6 @@ export default function Home() {
         </p>
         <Link
           href={"/dashboard"}
-          target="_blank"
           className={buttonVariants({ variant: "default", size: "sm" }) }
         >
           Get Started <ArrowRight />

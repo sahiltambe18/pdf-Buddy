@@ -1,33 +1,59 @@
 "use client"
-import React, { useState } from 'react';
 import MaxWidthWraapper from './MaxWidthWraapper';
 import { Table, TableHead, TableRow, TableCell, TableBody, TableHeader } from '@/components/ui/table'
 import { trpc } from '@/app/_trpc/client';
-import { Ghost, Trash2 } from 'lucide-react';
+import { Ghost, Trash2} from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
-import { toast } from 'sonner';
+import { Toaster, toast } from 'sonner';
+import UploadButton from './UploadButton';
+
 
 
 const Dashboard = () => {
-    
+
     const utils = trpc.useUtils()
 
-    const {mutate:deleteFile} = trpc.deleteFile.useMutation({
-        onSuccess: ()=>{
+    const { mutate: deleteFile } = trpc.deleteFile.useMutation({
+        onSuccess: () => {
             utils.getUserFiles.invalidate()
         }
     });
+
     const { data: files, isLoading } = trpc.getUserFiles.useQuery();
 
-    const deleteMsg = ()=>{
-        console.log("hua na")
-        toast("file has been deleted")
+    const deleteMsg = ({ id }: { id: string }) => {
+        let flag = false;
+        toast("file has been deleted", {
+            description: new Date().toDateString(),
+            action: {
+                label: "Undo",
+                onClick: () => {
+                    flag = true;
+                },
+            },
+        });
+
+        console.log("lock kiya jaye")
+        setTimeout(() => {
+
+            if (flag) {
+                console.log("delete nhi kiya")
+                return;
+            } else {
+                console.log("delete kiya")
+                deleteFile({ id })
+            }
+        }, 4500);
     }
 
 
     return (
 
         <MaxWidthWraapper className='px-4 items-center' >
+
+            <div className='flex justify-end my-5'>
+                <UploadButton/>
+            </div>
             {
                 files && files.length !== 0 ? (
                     <Table className='bg-white rounded-lg ' >
@@ -51,8 +77,8 @@ const Dashboard = () => {
 
                                         <TableCell>
                                             <button onClick={() => {
-                                                deleteMsg()
-                                                deleteFile({id:file.id})
+                                                deleteMsg({ id: file.id })
+
                                             }}><Trash2 className='text-red-600  hover:animate-bounce' /></button>
                                         </TableCell>
                                     </TableRow>
@@ -61,7 +87,6 @@ const Dashboard = () => {
                         </TableBody>
                     </Table>
                 ) : (isLoading ? (
-                    //i want to take thiis to center 
                     <div className='flex flex-col pt-10 items-center justify-center gap-4'>
                         {
                             Array.from({ length: 4 }).map((_, index) => (
@@ -78,7 +103,7 @@ const Dashboard = () => {
 
                 ) : (
                     <div className='mt-16 flex flex-col items-center gap-2'>
-                        <Ghost className='h-8 w-8 text-zinc-800' />
+                        <Ghost className='h-8 w-8 text-zinc-800 ' />
                         <h3 className='font-semibold text-xl'>
                             Pretty empty around here
                         </h3>
@@ -88,8 +113,15 @@ const Dashboard = () => {
 
                 )
             }
-
-
+            <Toaster position='bottom-right'
+                toastOptions={{
+                    unstyled: false,
+                    classNames: {
+                        title: 'text-red-400 font-semibold',
+                        actionButton: 'bg-green-500'
+                    },
+                }}
+            />
         </MaxWidthWraapper>
     );
 };
