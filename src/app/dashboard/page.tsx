@@ -7,7 +7,7 @@ import Dashboard from '@/components/Dashboard'
 const page = async () => {
     const session = await getServerSession(authOptions)
     const callback = '/auth-callback?origin=dashboard';
-    console.log(session);
+    // console.log(session);
     if(!session?.user || !session.user.email) {
         redirect(callback);
     }
