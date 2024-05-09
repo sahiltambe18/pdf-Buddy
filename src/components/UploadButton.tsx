@@ -3,16 +3,32 @@
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { useState } from "react"
 import { Button } from '@/components/ui/button'
-import { UploadCloud, UploadIcon, File } from 'lucide-react'
+import { UploadCloud, UploadIcon, File, Loader, Loader2 } from 'lucide-react'
 import Dropzone from 'react-dropzone'
 import { useUploadThing } from '@/lib/uploadThing'
+import { Toaster, toast } from 'sonner'
+import { trpc } from '@/app/_trpc/client'
+import { useRouter } from 'next/navigation'
+
 
 const UploadButton = () => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [progress, setProgress] = useState<number>(0)
     const [name, setName] = useState<string>("")
 
-    const {startUpload} = useUploadThing("pdfUploader")
+    const router = useRouter()
+
+    const { startUpload } = useUploadThing("pdfUploader")
+
+    const { mutate: startPooling } = trpc.getFile.useMutation({
+        //opts
+        onSuccess: (file) => {
+            router.push(`/dashboard/${file.id}`)
+        },
+        retry: true,
+        retryDelay: 500
+
+    })
 
     const startProgress = () => {
         setProgress(0);
@@ -25,9 +41,9 @@ const UploadButton = () => {
                     return prev;
                 }
                 console.log(progress)
-                return prev + 5;
+                return prev + 6;
             })
-        }, 500)
+        }, 700)
         return interval;
     }
 
@@ -37,9 +53,28 @@ const UploadButton = () => {
             startProgress()
             const res = await startUpload(acceptedFile)
             if (!res) {
+                console.log("error uploading")
                 // ig toast
+
+                toast("something went wrong", {
+                    description: "problem while uploading plese try later",
+                    duration: 3000
+                })
+                return
             }
-            // setProgress(0)
+            const [fileResponse] = res
+            const key = fileResponse?.key
+
+            if (!key) {
+                toast("something went wrong", {
+                    description: "problem while uploading plese try later",
+                    duration: 3000
+                })
+                return
+            }
+            setProgress(100)
+            startPooling({ key })
+
         }} >
             {({ getRootProps, getInputProps, acceptedFiles }) => (
                 <div {...getRootProps()} className='border h-64 m-4 border-dashed border-gray-300 rounded-lg rounded-b-none'>
@@ -66,15 +101,37 @@ const UploadButton = () => {
                                             {name}
                                         </span>
                                         <span>{progress + "%"}</span>
+
+                                        {progress === 100 && <div className='flex gap-3'>
+                                            <Loader2 className='text-green-500 w-5' /> Redirecting...
+                                        </div>}
+
                                     </div>
                                 )
                             }
-                            
+
                         </label>
                         <div className={`bg-green-500 h-1 duration-700`} style={{ width: `${progress}%`, transition: 'width 0.5s ease-in-out' }} />
                     </div>
+                    <input
+                        {...getInputProps()}
+                        type='file'
+                        id='dropzone-file'
+                        className='hidden'
+                    />
+                    <Toaster
+                        position='bottom-right'
+                        toastOptions={{
+                            unstyled: false,
+                            classNames: {
+                                title: 'text-red-400 font-semibold',
+                                actionButton: 'bg-green-500'
+                            },
+                        }}
+                    />
                 </div>
             )}
+
         </Dropzone>
     }
 

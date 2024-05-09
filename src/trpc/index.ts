@@ -76,15 +76,30 @@ export const appRouter = router({
 
     if(!file){
       throw new TRPCError({code:'NOT_FOUND'});
-    }
+    }    
+  }),
+  getFile: privateProcedure
+    .input(z.object({key:z.string()}))
+    .mutation(async({ctx,input})=>{
+      const {  email} = ctx;
+      const file = await prisma.file.findFirst({ where:{
+        key:input.key,
+        User:{
+          email:email
+        }
+      }});
 
-    await prisma.file.delete({where:{id:input.id}});
+      if(!file){
+        throw new TRPCError({code:"NOT_FOUND"})
+      }
 
-    return file;
+      return file;
+    })
+
+    
 
   })
 
-});
  
 // Export type router type signature,
 // NOT the router itself.
