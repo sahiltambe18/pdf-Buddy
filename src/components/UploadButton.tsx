@@ -3,7 +3,7 @@
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { useState } from "react"
 import { Button } from '@/components/ui/button'
-import { UploadCloud, UploadIcon, File, Loader, Loader2 } from 'lucide-react'
+import { UploadCloud, UploadIcon, File, Loader2 } from 'lucide-react'
 import Dropzone from 'react-dropzone'
 import { useUploadThing } from '@/lib/uploadThing'
 import { Toaster, toast } from 'sonner'
@@ -55,7 +55,6 @@ const UploadButton = () => {
             if (!res) {
                 console.log("error uploading")
                 // ig toast
-
                 toast("something went wrong", {
                     description: "problem while uploading plese try later",
                     duration: 3000

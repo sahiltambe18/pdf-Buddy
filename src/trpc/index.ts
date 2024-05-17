@@ -76,7 +76,12 @@ export const appRouter = router({
 
     if(!file){
       throw new TRPCError({code:'NOT_FOUND'});
-    }    
+    }  
+    
+    const res = await prisma.file.delete({where:{id:input.id }})
+
+    return res;
+    
   }),
   getFile: privateProcedure
     .input(z.object({key:z.string()}))

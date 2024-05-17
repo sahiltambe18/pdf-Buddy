@@ -2,10 +2,11 @@
 import MaxWidthWraapper from './MaxWidthWraapper';
 import { Table, TableHead, TableRow, TableCell, TableBody, TableHeader } from '@/components/ui/table'
 import { trpc } from '@/app/_trpc/client';
-import { Ghost, Trash2} from 'lucide-react';
+import { Ghost, Trash2 } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
 import { Toaster, toast } from 'sonner';
 import UploadButton from './UploadButton';
+import Link from 'next/link';
 
 
 
@@ -33,14 +34,14 @@ const Dashboard = () => {
             },
         });
 
-        console.log("lock kiya jaye")
+        // console.log("lock kiya jaye")
         setTimeout(() => {
 
             if (flag) {
-                console.log("delete nhi kiya")
+                // console.log("delete nhi kiya")
                 return;
             } else {
-                console.log("delete kiya")
+                // console.log("delete kiya")
                 deleteFile({ id })
             }
         }, 4500);
@@ -52,7 +53,7 @@ const Dashboard = () => {
         <MaxWidthWraapper className='px-4 items-center' >
 
             <div className='flex justify-end my-5'>
-                <UploadButton/>
+                <UploadButton />
             </div>
             {
                 files && files.length !== 0 ? (
@@ -72,7 +73,11 @@ const Dashboard = () => {
                                     const date = new Date(file.createAt)
                                     // console.log(date.toDateString())
                                     return <TableRow key={index}>
-                                        <TableCell>{file.name}</TableCell>
+                                        <TableCell >
+                                            <Link href={`/dashboard/${file.id}`}>
+                                                {file.name}
+                                            </Link>
+                                        </TableCell>
                                         <TableCell>{date.toDateString()}</TableCell>
 
                                         <TableCell>
