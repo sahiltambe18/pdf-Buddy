@@ -5,6 +5,7 @@ import { ResizablePanelGroup, ResizableHandle, ResizablePanel } from "@/componen
 import { getServerSession } from "next-auth"
 import { notFound, redirect } from "next/navigation"
 import prisma from "../../../../prisma"
+import ChatWrapper from "@/components/chat/ChatWrapper"
 
 
 
@@ -39,9 +40,7 @@ async function page ({ params }: { params: { pdfId: string } }) {
                 </ResizablePanel>
                 <ResizableHandle withHandle />
                 <ResizablePanel minSize={35} defaultSize={50}>
-                    <div className="flex h-full items-center justify-center p-6">
-                        <span className="font-semibold">Content</span>
-                    </div>
+                    <ChatWrapper fileId={file.id} />
                 </ResizablePanel>
             </ResizablePanelGroup>
 

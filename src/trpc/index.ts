@@ -85,7 +85,7 @@ export const appRouter = router({
   }),
   getFile: privateProcedure
     .input(z.object({key:z.string()}))
-    .mutation(async({ctx,input})=>{
+    .query(async({ctx,input})=>{
       const {  email} = ctx;
       const file = await prisma.file.findFirst({ where:{
         key:input.key,
@@ -99,9 +99,18 @@ export const appRouter = router({
       }
 
       return file;
-    })
+    }),
 
-    
+    getFileStatus: privateProcedure.input(z.object({ fileId: z.string()}))
+    .query(async({ctx , input})=>{
+      const file = await prisma.file.findFirst({where:{
+        id:input.fileId,  
+   }});
+
+   if (!file) return { status: 'PENDING' }
+
+   return { status: file.UploadStatus}
+    })
 
   })
 

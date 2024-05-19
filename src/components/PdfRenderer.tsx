@@ -37,9 +37,9 @@ function PdfRenderer({ url }: props) {
         </div>
       </div>
       <div className="w-full overflow-y-auto h-full">
-        <div ref={ref}>
+        <div style={{ width: width }} className="flex justify-center items-center " ref={ref}>
           <Document
-
+            className={"w-full"}
             onLoadSuccess={onSuccessHandler}
             loading={
               <div className="flex h-full align-middle justify-center items-center">
@@ -57,12 +57,8 @@ function PdfRenderer({ url }: props) {
             file={url} >
 
             {Array.from({ length: pages || 0 }, (_, i) => (
-              < Page key= { i+ 1} pageNumber={i + 1} />
-        ))}
-
-            
-
-            
+              < Page key={i + 1} pageNumber={i + 1} />
+            ))}
           </Document>
         </div>
       </div>
