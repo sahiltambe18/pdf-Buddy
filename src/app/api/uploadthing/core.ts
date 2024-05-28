@@ -3,6 +3,12 @@ import { UploadThingError } from "uploadthing/server";
 import { authOptions } from "../auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
 import prisma from "../../../../prisma";
+import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
+import { pinecone } from "@/lib/pinecone";
+import { OpenAIEmbeddings } from '@langchain/openai'
+import { PineconeStore } from '@langchain/pinecone'
+import { GoogleGenerativeAIEmbeddings } from '@langchain/google-genai'
+import { TaskType } from '@google/generative-ai'
  
 const f = createUploadthing();
  
@@ -30,7 +36,7 @@ export const ourFileRouter = {
  
       console.log("file url", file.url);
 
-      await prisma.file.create({
+      const savedFile = await prisma.file.create({
         data:{
           key:file.key,
           name:file.name,
@@ -38,7 +44,58 @@ export const ourFileRouter = {
           UploadStatus: 'PROCESSING',
           userId: metadata.userId
         }
-      })
+      });
+
+      try {
+        const res = await fetch(file.url);
+
+        const blob = await res.blob();
+
+        const loader = new PDFLoader(blob)
+
+        const pagesDoc = await loader.load();
+
+        // vectorise pdf
+
+        const pineconeIdx = pinecone.Index("jarvis")
+
+        const embeddings = new GoogleGenerativeAIEmbeddings({
+          model:"embedding-001",
+          apiKey:process.env.GOOGLE_API_KEY,
+          taskType:TaskType.RETRIEVAL_DOCUMENT,
+          title:savedFile.name
+        })
+
+        // console.log("uploaded pending")
+        const ress = await PineconeStore.fromDocuments(pagesDoc , embeddings , {
+          pineconeIndex:pineconeIdx,
+          namespace: savedFile.id
+        });
+
+        // if(ress.ok){
+          console.log("uploaded success")
+          console.log(ress)
+        // }
+
+        await prisma.file.update({data:{
+          UploadStatus:"SUCCESS"
+        },where:{
+          id:savedFile.id
+        }});
+
+
+
+
+      } catch (error) {
+        console.log(error)
+        await prisma.file.update({data:{
+          UploadStatus:"FAILED"
+        },where:{
+          id:savedFile.id
+        }});
+      }
+
+      
  
       // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
       return { uploadedBy: metadata };
