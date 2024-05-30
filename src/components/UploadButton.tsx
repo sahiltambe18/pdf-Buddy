@@ -20,13 +20,10 @@ const UploadButton = () => {
 
     const { startUpload } = useUploadThing("pdfUploader")
 
-    const { mutate: startPooling } = trpc.getFile.useMutation({
-        //opts
-        onSuccess: (file) => {
-            router.push(`/dashboard/${file.id}`)
-        },
-        retry: true,
-        retryDelay: 500
+    const { mutate : startPooling }  = trpc.getFile.useMutation({
+        onSuccess:(data)=>{
+            router.push(`/dashboard/${data.id}`)
+        },retryDelay:500
 
     })
 
@@ -40,7 +37,7 @@ const UploadButton = () => {
                     clearInterval(interval);
                     return prev;
                 }
-                console.log(progress)
+                // console.log(progress)
                 return prev + 6;
             })
         }, 700)
@@ -72,7 +69,8 @@ const UploadButton = () => {
                 return
             }
             setProgress(100)
-            startPooling({ key })
+            startPooling({key})
+              
 
         }} >
             {({ getRootProps, getInputProps, acceptedFiles }) => (

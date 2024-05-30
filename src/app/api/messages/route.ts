@@ -8,10 +8,17 @@ import { TaskType , GoogleGenerativeAI } from "@google/generative-ai";
 import { pinecone } from "@/lib/pinecone";
 import { PineconeStore } from "@langchain/pinecone";
 
-export const POST =  async (req:NextRequest)=>{
-     await req.json()
+export const POST =  async (req:NextRequest , res: NextResponse)=>{
+     
+    let body 
+    await req.json()
+     .then((data)=>{
+        body = data
+        // console.log(data)
+     })
 
-    const body = req.body
+    //  console.log(req.body)
+    console.log(body)
 
     const session = await getServerSession(authOptions)
 
@@ -47,6 +54,8 @@ export const POST =  async (req:NextRequest)=>{
         }
     })
 
+    console.log("donne till here")
+
     const embeddings = new GoogleGenerativeAIEmbeddings({
         model:"embedding-001",
         apiKey:process.env.GOOGLE_API_KEY,
@@ -60,9 +69,9 @@ export const POST =  async (req:NextRequest)=>{
         namespace:file.id,
         pineconeIndex:pineconeIdx
     })
-
+    
     const result = await vectorStore.similaritySearch(message,4);
-
+    
     const prevMessages = await prisma.message.findMany({
         where:{
             fileId:file.id
@@ -70,17 +79,18 @@ export const POST =  async (req:NextRequest)=>{
             createdAt:"asc"
         },take:6
     });
-
+    
     const formatedMsg = prevMessages.map( (msg)=>({
         role: msg.isUserMsg? "user" as const : "assistant" as const,
         content:msg.text
     }));
-
+    
     const prompt = `The user asked: ${message}. 
     The document title is: ${file.name}. 
     The related pdf embedding: ${JSON.stringify({result})}
     the previous messages : ${JSON.stringify(formatedMsg)}
     `;
+    // console.log("error up")
 
     const genAi = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!)
 
@@ -96,5 +106,7 @@ export const POST =  async (req:NextRequest)=>{
         fileId:fileId,
         userId:User.id
     }})
-    return  NextResponse.json(text)
+
+    return  res
+    // return  NextResponse.json(req.body)
 };

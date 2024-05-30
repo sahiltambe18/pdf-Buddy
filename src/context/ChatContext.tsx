@@ -22,7 +22,7 @@ export const ChatContextProvider = ({fileId, children}:{fileId:string , children
     const {toast} = useToast()
     const [isLoading , setIsLoading] = useState<boolean>(false)
     const {mutate:sendMessage} = useMutation({
-        mutationFn: async (message:{message:string})=>{
+        mutationFn: async (message:string)=>{
             const resposnse = await fetch("/api/messages",{
                 method:"POST",
                 body: JSON.stringify({
@@ -38,7 +38,7 @@ export const ChatContextProvider = ({fileId, children}:{fileId:string , children
         }
     })
 
-    const addMessage = ()=> sendMessage({message})
+    const addMessage = ()=> sendMessage(message)
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>)=>{
         setMessage(e.target.value)

@@ -85,7 +85,7 @@ export const appRouter = router({
   }),
   getFile: privateProcedure
     .input(z.object({key:z.string()}))
-    .query(async({ctx,input})=>{
+    .mutation(async({ctx,input})=>{
       const {  email} = ctx;
       const file = await prisma.file.findFirst({ where:{
         key:input.key,

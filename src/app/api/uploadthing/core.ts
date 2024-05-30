@@ -34,7 +34,7 @@ export const ourFileRouter = {
       
       console.log("Upload complete for userId:", metadata);
  
-      console.log("file url", file.url);
+      // console.log("file url", file.url);
 
       const savedFile = await prisma.file.create({
         data:{
@@ -72,21 +72,19 @@ export const ourFileRouter = {
           namespace: savedFile.id
         });
 
-        // if(ress.ok){
+        
           console.log("uploaded success")
-          console.log(ress)
-        // }
-
+          // console.log(ress)
+        
         await prisma.file.update({data:{
           UploadStatus:"SUCCESS"
         },where:{
           id:savedFile.id
         }});
 
-
-
-
       } catch (error) {
+
+        console.log("embedding failed")
         console.log(error)
         await prisma.file.update({data:{
           UploadStatus:"FAILED"
