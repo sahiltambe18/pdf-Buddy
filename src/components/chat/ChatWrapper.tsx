@@ -95,7 +95,7 @@ export default function ChatWrapper({ fileId }: props) {
           </div>
         </div>
 
-        <ChatInput isDisabled />
+        <ChatInput isDisabled={true} />
       </div >
     )
 
@@ -106,7 +106,7 @@ export default function ChatWrapper({ fileId }: props) {
 
     <div className="relative min-h-full bg-zinc-50 flex divide-zinc-200">
       <div className="flex flex-col flex-1 justify-between mb-28">
-        <Message />
+        <Message fileId={fileId} />
       </div>
       <ChatInput isDisabled={false} />
     </div>

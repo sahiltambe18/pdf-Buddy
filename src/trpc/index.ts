@@ -8,6 +8,7 @@ import prisma from '../../prisma';
 import { ConnectToDatabase } from '@/helpers/db';
 import { randomUUID } from 'crypto';
 import { z } from 'zod'
+import { getNamedRouteRegex } from 'next/dist/shared/lib/router/utils/route-regex';
 
 export const appRouter = router({
   
@@ -100,6 +101,47 @@ export const appRouter = router({
 
       return file;
     }),
+    
+    getFileMessages: privateProcedure.input(z.object({fileId:z.string(), cursor:z.string().nullish() , limit:z.number().min(1).max(20 ).nullish().default(10)}))
+    .query(async({ctx , input})=>{
+      const {email} = ctx;
+      const {fileId , cursor,limit} = input;
+      const User = await prisma.user.findFirst({where:{email}});
+      const file = await prisma.file.findFirst({where:{
+        id:fileId,
+        userId:User?.id
+      }});
+      if(!file || !User) throw new TRPCError({code:'NOT_FOUND'});
+
+      const messages = await prisma.message.findMany({
+        cursor:cursor ? {id:cursor}:undefined,
+        take:limit? limit+1 : MAX_MESSAGE_LIMIT,
+        where:{
+          fileId,
+          userId:User.id
+        },select:{
+          createdAt:true,
+          isUserMsg:true,
+          id:true,
+          text:true,
+        },
+        orderBy:{
+          createdAt:'desc'
+        }
+      });
+      let nextCursor : typeof cursor| undefined = undefined;
+
+      if(messages.length>1){
+        const lastMessage = messages.pop();
+        nextCursor  = lastMessage?.id;
+      }
+
+      return {
+        messages,
+        nextCursor
+      }
+    })
+    ,
 
     getFileStatus: privateProcedure.input(z.object({ fileId: z.string()}))
     .query(async({ctx , input})=>{

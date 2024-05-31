@@ -54,7 +54,6 @@ export const POST =  async (req:NextRequest , res: NextResponse)=>{
         }
     })
 
-    console.log("donne till here")
 
     const embeddings = new GoogleGenerativeAIEmbeddings({
         model:"embedding-001",

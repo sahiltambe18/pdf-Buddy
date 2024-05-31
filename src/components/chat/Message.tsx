@@ -1,7 +1,10 @@
+import { trpc } from "@/app/_trpc/client"
 
-function Message() {
+
+function Message({fileId}:{fileId:string}) {
+  const messages = trpc.getFileMessages.useQuery({fileId,limit:5});
   return (
-    <div>Message</div>
+    <div>{JSON.stringify(messages)}</div>
   )
 }
 

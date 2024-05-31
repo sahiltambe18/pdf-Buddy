@@ -1,0 +1,1 @@
+const MAX_MESSAGE_LIMIT = 10
