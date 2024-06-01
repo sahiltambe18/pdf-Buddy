@@ -8,7 +8,7 @@ import { TaskType , GoogleGenerativeAI } from "@google/generative-ai";
 import { pinecone } from "@/lib/pinecone";
 import { PineconeStore } from "@langchain/pinecone";
 
-export const POST =  async (req:NextRequest , res: NextResponse)=>{
+export const POST =  async (req:NextRequest , res:NextResponse)=>{
      
     let body 
     await req.json()
@@ -106,6 +106,7 @@ export const POST =  async (req:NextRequest , res: NextResponse)=>{
         userId:User.id
     }})
 
-    return  res
+    // return  new NextResponse(JSON.stringify({ text }), { status: 200 });
+    return  new Response(text , { status: 200 });
     // return  NextResponse.json(req.body)
 };
