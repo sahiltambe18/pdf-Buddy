@@ -6,7 +6,7 @@ import { signIn } from 'next-auth/react'
 const page = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const origin = searchParams.get('origin')
+  const origin = searchParams.get('origin');
 
    const {data , error} =  trpc.authCallback.useQuery(undefined , {})
    
@@ -15,7 +15,7 @@ const page = () => {
     signIn()
     router.refresh()
     //router.push("/sign-in", )
-  }
+    }
 
   if(data?.success){
     router.push(origin? `/${origin}`:'/dashboard');

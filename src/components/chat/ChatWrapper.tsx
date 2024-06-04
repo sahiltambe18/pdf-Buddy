@@ -104,8 +104,8 @@ export default function ChatWrapper({ fileId }: props) {
   return (
     <ChatContextProvider fileId={fileId}>
 
-    <div className="relative min-h-full bg-zinc-50 flex divide-zinc-200">
-      <div className="flex flex-col flex-1 justify-between mb-28">
+    <div className="relative min-h-full overflow-y-auto bg-zinc-50 flex divide-zinc-200">
+      <div className="flex flex-col overflow-y-auto flex-1 justify-between mb-28">
         <Messages fileId={fileId} />
       </div>
       <ChatInput isDisabled={false} />

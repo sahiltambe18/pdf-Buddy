@@ -14,7 +14,7 @@ export const POST =  async (req:NextRequest , res:NextResponse)=>{
     await req.json()
      .then((data)=>{
         body = data
-        // console.log(data)
+         console.log(data)
      })
 
     //  console.log(req.body)

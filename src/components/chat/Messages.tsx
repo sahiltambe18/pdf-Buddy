@@ -3,6 +3,8 @@ import { keepPreviousData } from "@tanstack/react-query";
 import { Loader2, MessageSquare } from "lucide-react";
 import Message from "./Message";
 import { Skeleton } from "../ui/skeleton";
+import { useContext } from "react";
+import { ChatContext } from "@/context/ChatContext";
 
 
 function Messages({ fileId }: { fileId: string }) {
@@ -14,6 +16,8 @@ function Messages({ fileId }: { fileId: string }) {
     placeholderData:keepPreviousData
    }
   );
+
+  const {isLoading:msgLoading} = useContext(ChatContext);
 
   const loadingMessage = {
     createdAt: new Date().toISOString(),
@@ -29,7 +33,7 @@ function Messages({ fileId }: { fileId: string }) {
   const messages = data?.pages.flatMap((page)=> page.messages)
 
   const combinedMessages = [
-    ...(true? [loadingMessage]: []),
+    ...(msgLoading? [loadingMessage]: []),
     ...(messages ??  [])
   ];
 
