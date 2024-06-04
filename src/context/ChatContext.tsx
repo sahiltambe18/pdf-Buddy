@@ -6,7 +6,7 @@ import { ReactNode, createContext, useRef, useState } from "react";
 
 type chatContextProps = {
     handleChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void
-    addMessage: () => void,
+    addMessage: ({message}:{message:string}) => void,
     message: string
     isLoading: boolean
 }
@@ -37,7 +37,7 @@ export const ChatContextProvider = ({
       }: {
         message: string
       }) => {
-        const response = await fetch('/api/message', {
+        const response = await fetch('/api/messages', {
           method: 'POST',
           body: JSON.stringify({
             fileId,
@@ -52,19 +52,20 @@ export const ChatContextProvider = ({
         return response.body
       },
       onMutate: async ({ message }) => {
+        console.log(message)
         backupMessage.current = message
         setMessage('')
-  
+        
         // step 1
         await utils.getFileMessages.cancel()
-  
+        
         // step 2
-        const previousMessages =
-          utils.getFileMessages.getInfiniteData()
-  
+        const previousMessages = utils.getFileMessages.getInfiniteData({fileId , limit:15})
+        
+        console.log(previousMessages)
         // step 3
         utils.getFileMessages.setInfiniteData(
-          { fileId, limit: MAX_MESSAGE_LIMIT },
+          { fileId, limit: 9 },
           (old) => {
             if (!old) {
               return {
@@ -72,6 +73,8 @@ export const ChatContextProvider = ({
                 pageParams: [],
               }
             }
+
+            console.log(old)
   
             let newPages = [...old.pages]
   
@@ -209,7 +212,12 @@ export const ChatContextProvider = ({
       setMessage(e.target.value)
     }
   
-    const addMessage = () => sendMessage({ message })
+    const addMessage = ({message}:{message:string})=>{
+      console.log(message)
+      if(message){
+        sendMessage({message})
+      }
+    }
   
     return (
       <ChatContext.Provider

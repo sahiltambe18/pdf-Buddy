@@ -116,7 +116,7 @@ export const appRouter = router({
 
       const messages = await prisma.message.findMany({
         cursor:cursor ? {id:cursor}:undefined,
-        take:limit? limit+1 : 5,
+        // take:limit? limit+1 : 5,
         where:{
           fileId,
           userId:User.id

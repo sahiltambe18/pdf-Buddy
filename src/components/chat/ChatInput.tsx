@@ -31,7 +31,7 @@ export default function ChatInput({ isDisabled }: props) {
               onKeyDown={(e)=>{
                 if(e.key==="Enter" && !e.shiftKey){
                   e.preventDefault()
-                  addMessage()
+                  addMessage({message})
                   TextAreaRef.current?.focus()
                 }
               }}
@@ -42,7 +42,7 @@ export default function ChatInput({ isDisabled }: props) {
               aria-label="Send Message"
               onClick={(e)=>{
                 e.preventDefault()
-                addMessage()
+                addMessage({message})
               }}
               
               >

@@ -1,5 +1,5 @@
 import { trpc } from "@/app/_trpc/client"
-import { keepPreviousData } from "@tanstack/react-query";
+// import { keepPreviousData } from "@tanstack/react-query";
 import { Loader2, MessageSquare } from "lucide-react";
 import Message from "./Message";
 import { Skeleton } from "../ui/skeleton";
@@ -13,7 +13,7 @@ function Messages({ fileId }: { fileId: string }) {
     limit: 5
    },{
     getNextPageParam:(lastPage)=> lastPage?.nextCursor,
-    placeholderData:keepPreviousData
+    keepPreviousData:true
    }
   );
 

@@ -18,13 +18,11 @@ export default function ChatWrapper({ fileId }: props) {
   const { data, isLoading } = trpc.getFileStatus.useQuery(
     {
       fileId: fileId
-    }, {
-    refetchInterval: ({ state: { data } }) => {
-      //console.log(data)
-      return data?.status === 'SUCCESS' || data?.status === 'FAILED' ? false : 500;
-      // return ='SUCCESS' || data.state.status=='FAILED' ? false : 500
+    },{
+      refetchInterval(data, query) {
+          return  data?.status === 'SUCCESS' || data?.status === 'FAILED' ? false: 500
+      },
     }
-  }
   )
 
   if (isLoading)
