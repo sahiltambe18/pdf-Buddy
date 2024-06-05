@@ -1,233 +1,121 @@
 import { trpc } from "@/app/_trpc/client";
 import { useToast } from "@/components/ui/use-toast";
+import { ExtendedMessages } from "@/types/message";
 import { useMutation } from "@tanstack/react-query";
 import { randomUUID } from "crypto";
-import { ReactNode, createContext, useRef, useState } from "react";
+import { Loader2 } from "lucide-react";
+import { ReactNode, createContext, useState, useCallback } from "react";
 
 type chatContextProps = {
-    handleChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void
-    addMessage: ({message}:{message:string}) => void,
-    message: string
-    isLoading: boolean
-}
+  handleChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  addMessage: ({ message }: { message: string }) => void;
+  setPrevMsg: (msgs: ExtendedMessages) => void;
+  message: string;
+  messages: ExtendedMessages;
+  isLoading: boolean;
+};
 
 export const ChatContext = createContext<chatContextProps>({
-    handleChange: () => { },
-    addMessage: () => { },
-    message: "",
-    isLoading: false
-})
+  handleChange: () => {},
+  addMessage: () => {},
+  setPrevMsg: () => {},
+  message: "",
+  messages: [],
+  isLoading: false,
+});
 
 export const ChatContextProvider = ({
-    fileId,
-    children,
-  }: {fileId:string , children:ReactNode}) => {
-    const [message, setMessage] = useState<string>('')
-    const [isLoading, setIsLoading] = useState<boolean>(false)
-  
-    const utils = trpc.useContext()
-  
-    const { toast } = useToast()
-  
-    const backupMessage = useRef('')
-  
-    const { mutate: sendMessage } = useMutation({
-      mutationFn: async ({
-        message,
-      }: {
-        message: string
-      }) => {
-        const response = await fetch('/api/messages', {
-          method: 'POST',
+  fileId,
+  children,
+}: { fileId: string; children: ReactNode }) => {
+  const [message, setMessage] = useState<string>("");
+  const [messages, setMessages] = useState<ExtendedMessages>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setMessage(e.target.value);
+    },
+    []
+  );
+
+  const setPrevMsg = useCallback((msgs: ExtendedMessages) => {
+    setMessages(msgs);
+  }, []);
+
+  const addMessage = useCallback(
+    async ({ message }: { message: string }) => {
+      setMessage("")
+      setIsLoading(true);
+      const newMessage = {
+        createdAt: new Date().toISOString(),
+        id: crypto.randomUUID(),
+        isUserMsg: true,
+        text: message,
+      };
+      setMessages((prev) => [...prev, newMessage]);
+
+      try {
+        const res = await fetch("/api/messages/", {
           body: JSON.stringify({
             fileId,
             message,
           }),
-        })
-  
-        if (!response.ok) {
-          throw new Error('Failed to send message')
-        }
-  
-        return response.body
-      },
-      onMutate: async ({ message }) => {
-        console.log(message)
-        backupMessage.current = message
-        setMessage('')
-        
-        // step 1
-        await utils.getFileMessages.cancel()
-        
-        // step 2
-        const previousMessages = utils.getFileMessages.getInfiniteData({fileId , limit:15})
-        
-        console.log(previousMessages)
-        // step 3
-        utils.getFileMessages.setInfiniteData(
-          { fileId, limit: 9 },
-          (old) => {
-            if (!old) {
-              return {
-                pages: [],
-                pageParams: [],
-              }
-            }
+          method: "POST",
+        });
 
-            console.log(old)
-  
-            let newPages = [...old.pages]
-  
-            let latestPage = newPages[0]!
-  
-            latestPage.messages = [
-              {
-                createdAt: new Date().toISOString(),
-                id: crypto.randomUUID(),
-                text: message,
-                isUserMsg: true,
-              },
-              ...latestPage.messages,
-            ]
-  
-            newPages[0] = latestPage
-  
-            return {
-              ...old,
-              pages: newPages,
-            }
-          }
-        )
-  
-        setIsLoading(true)
-  
-        return {
-          previousMessages:
-            previousMessages?.pages.flatMap(
-              (page) => page.messages
-            ) ?? [],
+        if (!res.ok) {
+          throw new Error("Could not fetch response");
         }
-      },
-      onSuccess: async (stream) => {
-        setIsLoading(false)
-  
-        if (!stream) {
-          return toast({
-            title: 'There was a problem sending this message',
-            description:
-              'Please refresh this page and try again',
-            variant: 'destructive',
-          })
-        }
-  
-        const reader = stream.getReader()
-        const decoder = new TextDecoder()
-        let done = false
-  
-        // accumulated response
-        let accResponse = ''
-  
-        while (!done) {
-          const { value, done: doneReading } =
-            await reader.read()
-          done = doneReading
-          const chunkValue = decoder.decode(value)
-  
-          accResponse += chunkValue
-  
-          // append chunk to the actual message
-          utils.getFileMessages.setInfiniteData(
-            { fileId, limit: MAX_MESSAGE_LIMIT },
-            (old) => {
-                
-              if (!old) return { pages: [], pageParams: [] }
-  
-              let isAiResponseCreated = old.pages.some(
-                (page) =>
-                  page.messages.some(
-                    (message) => message.id === 'ai-response'
-                  )
-              )
-  
-              let updatedPages = old.pages.map((page) => {
-                if (page === old.pages[0]) {
-                  let updatedMessages
-  
-                  if (!isAiResponseCreated) {
-                    updatedMessages = [
-                      {
-                        createdAt: new Date().toISOString(),
-                        id: 'ai-response',
-                        text: accResponse,
-                        isUserMessage: false,
-                      },
-                      ...page.messages,
-                    ]
-                  } else {
-                    updatedMessages = page.messages.map(
-                      (message) => {
-                        if (message.id === 'ai-response') {
-                          return {
-                            ...message,
-                            text: accResponse,
-                          }
-                        }
-                        return message
-                      }
-                    )
-                  }
-  
-                  return {
-                    ...page,
-                    messages: updatedMessages,
-                  }
-                }
-  
-                return page
-              })
-  
-              return { ...old, pages: updatedPages }
-            }
+
+        const loadingMsg = {
+          createdAt: new Date().toISOString(),
+          id: "loader-message",
+          isUserMsg: false,
+          text: (
+            <span className="flex h-full justify-center items-center">
+              <Loader2 className="h-4 animate-spin" />
+            </span>
           )
         }
-      },
-  
-      onError: (_, __, context) => {
-        setMessage(backupMessage.current)
-        utils.getFileMessages.setData(
-          { fileId },
-          { messages: context?.previousMessages ?? [] }
-        )
-      },
-      onSettled: async () => {
-        setIsLoading(false)
-  
-        await utils.getFileMessages.invalidate({ fileId })
-      },
-    })
-  
-    const handleChange = (
-      e: React.ChangeEvent<HTMLTextAreaElement>
-    ) => {
-      setMessage(e.target.value)
-    }
-  
-    const addMessage = ({message}:{message:string})=>{
-      console.log(message)
-      if(message){
-        sendMessage({message})
+
+        setMessages((prev)=> {
+          return [...prev,loadingMsg]
+        });
+
+
+        const data = await res.text();
+        setMessages(prev => [...prev,{
+          createdAt:new Date().toISOString(),
+          id:crypto.randomUUID(),
+          isUserMsg:false,
+          text:data
+        }]);
+        // console.log(data)
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setMessages((prev)=>{
+          return prev.filter( msg => msg.id!=="loader-message")
+        })
+        setIsLoading(false);
       }
-    }
-  
-    return (
-      <ChatContext.Provider
-        value={{
-          addMessage,
-          message,
-          handleChange,
-          isLoading,
-        }}>
-        {children}
-      </ChatContext.Provider>
-    )
-  }
+    },
+    [fileId]
+  );
+
+  return (
+    <ChatContext.Provider
+      value={{
+        addMessage,
+        message,
+        handleChange,
+        setPrevMsg,
+        messages,
+        isLoading,
+      }}
+    >
+      {children}
+    </ChatContext.Provider>
+  );
+};

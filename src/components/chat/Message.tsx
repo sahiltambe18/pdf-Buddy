@@ -1,3 +1,4 @@
+'Message.tsx'
 import { cn } from "@/lib/utils"
 import { ExtendedMessages } from "@/types/message"
 import { Icons } from "../Icon"
@@ -5,7 +6,7 @@ import ReactMarkdown from 'react-markdown';
 
 
 interface MessageProps {
-  message: ExtendedMessages,
+  message: ExtendedMessages[number],
   isSamePerson: boolean
 }
 

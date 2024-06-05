@@ -1,4 +1,5 @@
 'use client'
+'chat wrapper.tsx'
 import { trpc } from "@/app/_trpc/client";
 import ChatInput from "./ChatInput";
 import { ChevronLeft, Loader2, XCircle } from "lucide-react";
@@ -102,8 +103,8 @@ export default function ChatWrapper({ fileId }: props) {
   return (
     <ChatContextProvider fileId={fileId}>
 
-    <div className="relative min-h-full overflow-y-auto bg-zinc-50 flex divide-zinc-200">
-      <div className="flex flex-col overflow-y-auto flex-1 justify-between mb-28">
+    <div className="relative h-full overflow-y-auto  bg-zinc-50 flex divide-zinc-200">
+      <div className="flex flex-col overflow-y-auto flex-1 justify-between mb-1">
         <Messages fileId={fileId} />
       </div>
       <ChatInput isDisabled={false} />

@@ -2,11 +2,12 @@
 import MaxWidthWraapper from './MaxWidthWraapper';
 import { Table, TableHead, TableRow, TableCell, TableBody, TableHeader } from '@/components/ui/table'
 import { trpc } from '@/app/_trpc/client';
-import { Ghost, Trash2 } from 'lucide-react';
+import { Ghost, Loader2, Trash2 } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
 import { Toaster, toast } from 'sonner';
 import UploadButton from './UploadButton';
 import Link from 'next/link';
+import { useState } from 'react';
 
 
 
@@ -47,6 +48,8 @@ const Dashboard = () => {
         }, 4500);
     }
 
+    const [redirecting , setRedirecting] = useState(-1)
+
 
     return (
 
@@ -74,8 +77,17 @@ const Dashboard = () => {
                                     // console.log(date.toDateString())
                                     return <TableRow key={index}>
                                         <TableCell >
-                                            <Link href={`/dashboard/${file.id}`}>
+                                            <Link className='flex gap-3'
+                                            onClick={
+                                                ()=>{
+
+                                                    setRedirecting(index)
+                                                }
+                                            }
+                                            href={`/dashboard/${file.id}`}>
                                                 {file.name}
+                                                
+                                            {redirecting===index && <Loader2  className={"text-green-500 w-5 animate-spin"}   />}
                                             </Link>
                                         </TableCell>
                                         <TableCell>{date.toDateString()}</TableCell>

@@ -25,17 +25,13 @@ function PdfRenderer({ url }: props) {
   const [pages, setPages] = useState(1)
 
   const onSuccessHandler = (e: { numPages: number }) => {
-    // console.log(e)
+    
     setPages(e.numPages)
   }
 
   return (
-    <MaxWidthWraapper className="w-full p-1 md:p-1 m-0 rounded-md shadow-lg bg-red-600 h-full" >
-      <div className="h-14 w-full border-b border-zinc-400">
-        <div className="flex items-center justify-center h-full gap-1.5">
-          top bar
-        </div>
-      </div>
+    <MaxWidthWraapper className="w-full p-1 md:p-1 m-0 rounded-md shadow-lg  h-full" >
+      
       <div className="w-full overflow-y-auto h-full">
         <div style={{ width: width }} className="flex justify-center items-center " ref={ref}>
           <Document

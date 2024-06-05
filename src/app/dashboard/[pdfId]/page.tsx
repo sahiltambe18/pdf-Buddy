@@ -39,7 +39,7 @@ async function page ({ params }: { params: { pdfId: string } }) {
                     <PdfRenderer url={file.url} />
                 </ResizablePanel>
                 <ResizableHandle withHandle />
-                <ResizablePanel minSize={35} defaultSize={50}>
+                <ResizablePanel   minSize={35} defaultSize={50}>
                     <ChatWrapper fileId={file.id} />
                 </ResizablePanel>
             </ResizablePanelGroup>

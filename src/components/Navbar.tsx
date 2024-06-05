@@ -11,13 +11,15 @@ import {
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
 import MaxWidthWraapper from "./MaxWidthWraapper";
-import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import Image from "next/image";
 import { buttonVariants } from "./ui/button";
 import { ArrowRight } from "lucide-react";
-import { signIn } from 'next-auth/react'
+import { signIn  , signOut, useSession} from 'next-auth/react'
 
 export default function NavigationMenuDemo() {
+
+  const {data:session , status} = useSession()
+  const isLoading = status==="loading"
   return (
     <MaxWidthWraapper className="flex justify-center">
       <NavigationMenu>
@@ -32,9 +34,9 @@ export default function NavigationMenuDemo() {
             />
           </NavigationMenuItem>
           <div className="flex w-80 text-xs justify-between">
-            <NavigationMenuItem className={buttonVariants({variant:"underline" })} >Pricing</NavigationMenuItem>
-            <NavigationMenuItem className={buttonVariants({variant:"underline" })} onClick={()=>{signIn()}} >Sign-in</NavigationMenuItem>
-            <NavigationMenuItem className={buttonVariants({variant:"underline" })} >Get Started <ArrowRight className="hover:animate-pulse hover:duration-1000" /> </NavigationMenuItem>
+            {!isLoading && !session && <NavigationMenuItem className={buttonVariants({variant:"underline" })} onClick={()=>{signIn()}} >Sign-in</NavigationMenuItem>}
+            {!isLoading && session && (<NavigationMenuItem className={buttonVariants({variant:"underline" })} >Get Started <ArrowRight className="hover:animate-pulse hover:duration-1000" /> </NavigationMenuItem>)}
+            {!isLoading && session && (<NavigationMenuItem className={buttonVariants({variant:"underline" })} onClick={()=>{signOut()}} >Logout</NavigationMenuItem>)}
           </div>
         </NavigationMenuList>
       </NavigationMenu>

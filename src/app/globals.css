@@ -73,3 +73,7 @@
 .scrollbar-thumb-rounded::-webkit-scrollbar-thumb {
   border-radius: 7px;
 }
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}

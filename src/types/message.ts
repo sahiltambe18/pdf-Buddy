@@ -6,7 +6,12 @@ import { number } from "zod";
 
 type RouterOutput = inferRouterOutputs<AppRouter>
 
-type Messages = RouterOutput["getFileMessages"]["messages"]
+type Messages = {
+    id: string;
+    text: string;
+    isUserMsg: boolean;
+    createdAt: string;
+}[]
 
 type omitText = Omit<Messages[number],"text">
 
@@ -15,4 +20,4 @@ type extendedText = {
     text: string | JSX.Element
 }
 
-export type ExtendedMessages = omitText & extendedText
+export type ExtendedMessages = (omitText & extendedText)[];

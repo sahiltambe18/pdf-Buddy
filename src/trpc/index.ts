@@ -105,7 +105,6 @@ export const appRouter = router({
     getFileMessages: privateProcedure.input(z.object({fileId:z.string(), cursor:z.string().nullish() , limit:z.number().min(1).max(20 ).nullish().default(10)}))
     .query(async({ctx , input})=>{
       const {email} = ctx;
-      console.log(input)
       const {fileId , cursor,limit} = input;
       const User = await prisma.user.findFirst({where:{email}});
       const file = await prisma.file.findFirst({where:{
