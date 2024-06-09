@@ -6,8 +6,8 @@ import Navbar from '@/components/Navbar'
 
 import Provider from '@/components/Provider'
 import { getServerSession } from 'next-auth'
-import { authOptions } from './api/auth/[...nextauth]/route'
 import SessionProviders from '@/components/SessionProviders'
+import { authOptions } from "@/lib/authOptions";
 
 const inter = Inter({ subsets: ['latin'] })
 

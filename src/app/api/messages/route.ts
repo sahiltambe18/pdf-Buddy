@@ -1,12 +1,12 @@
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { authOptions } from "../auth/[...nextauth]/route";
 import { inputValidator } from "@/lib/utils";
 import prisma from "../../../../prisma";
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { TaskType , GoogleGenerativeAI } from "@google/generative-ai";
 import { pinecone } from "@/lib/pinecone";
 import { PineconeStore } from "@langchain/pinecone";
+import { authOptions } from "@/lib/authOptions";
 
 export const POST =  async (req:NextRequest , res:NextResponse)=>{
      

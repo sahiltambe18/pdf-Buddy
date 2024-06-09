@@ -1,4 +1,3 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import MaxWidthWraapper from "@/components/MaxWidthWraapper"
 import PdfRenderer from "@/components/PdfRenderer"
 import { ResizablePanelGroup, ResizableHandle, ResizablePanel } from "@/components/ui/resizable"
@@ -6,6 +5,7 @@ import { getServerSession } from "next-auth"
 import { notFound, redirect } from "next/navigation"
 import prisma from "../../../../prisma"
 import ChatWrapper from "@/components/chat/ChatWrapper"
+import { authOptions } from "@/lib/authOptions";
 
 
 

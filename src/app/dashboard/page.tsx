@@ -1,8 +1,8 @@
 import { getServerSession } from 'next-auth/next'
-import { authOptions } from '../api/auth/[...nextauth]/route'
 import { redirect } from 'next/navigation'
 import { getUser } from '@/helpers/tools'
 import Dashboard from '@/components/Dashboard'
+import { authOptions } from "@/lib/authOptions";
 
 const page = async () => {
     const session = await getServerSession(authOptions)
