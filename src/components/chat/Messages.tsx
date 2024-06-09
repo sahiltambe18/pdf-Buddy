@@ -75,7 +75,7 @@ function Messages({ fileId }: { fileId: string }) {
         ) : (
           <div className="flex-1 flex-col gap-2 flex justify-center items-center">
             <MessageSquare className="h-8 w-8 text-blue-500" />
-            <h3 className="font-semibold text-xl">You're all set</h3>
+            <h3 className="font-semibold text-xl">You&apos;re all set</h3>
           </div>
         )
       )}
