@@ -3,7 +3,7 @@ import { useRouter , useSearchParams } from 'next/navigation'
 import { trpc } from '../_trpc/client'
 import { signIn } from 'next-auth/react'
 
-const page = () => {
+const Page = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const origin = searchParams.get('origin');
@@ -35,4 +35,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page
