@@ -6,25 +6,27 @@ import { trpc } from "@/app/_trpc/client";
 import { httpBatchLink } from '@trpc/client'
 
 
-const Provider = ({children}:{children: ReactNode}) => {
+const Provider = ({ children }: { children: ReactNode }) => {
 
     const [queryClient] = useState(() => new QueryClient());
     const [trpcClient] = useState(() =>
         trpc.createClient({
             links: [
                 httpBatchLink({
-                    url: "http://localhost:3000/api/trpc"
+                    url: process.env.URL!
                 })
             ]
         })
     )
 
     return (
-        <trpc.Provider children={
-            <QueryClientProvider children={children} client={queryClient} />
-        } 
-        client={trpcClient} 
-        queryClient={queryClient} />
+        <trpc.Provider
+            client={trpcClient}
+            queryClient={queryClient} >
+            <QueryClientProvider client={queryClient} >
+                {children}
+            </QueryClientProvider>
+        </trpc.Provider>
     )
 }
 
