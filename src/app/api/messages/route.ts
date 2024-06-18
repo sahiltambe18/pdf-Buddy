@@ -89,7 +89,7 @@ export const POST =  async (req:NextRequest , res:NextResponse)=>{
 
     const genAi = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!)
 
-    const model = genAi.getGenerativeModel({model:"gemini-1.5-flash"});
+    const model = genAi.getGenerativeModel({model:"gemini-pro"});
 
     const modelResult = await model.generateContent(prompt);
     const response = await modelResult.response;

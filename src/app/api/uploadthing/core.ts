@@ -4,7 +4,6 @@ import { getServerSession } from "next-auth";
 import prisma from "../../../../prisma";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
 import { pinecone } from "@/lib/pinecone";
-import { OpenAIEmbeddings } from '@langchain/openai'
 import { PineconeStore } from '@langchain/pinecone'
 import { GoogleGenerativeAIEmbeddings } from '@langchain/google-genai'
 import { TaskType } from '@google/generative-ai'

@@ -1,5 +1,3 @@
-import { randomUUID } from "crypto";
-import prisma from "../../../../prisma";
 import { NextApiResponse } from "next";
 import { NextApiRequest } from "next";
 import { NextRequest, NextResponse } from "next/server";
