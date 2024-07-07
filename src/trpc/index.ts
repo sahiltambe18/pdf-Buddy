@@ -53,6 +53,8 @@ export const appRouter = router({
   getUserFiles: privateProcedure.query( async ({ctx})=>{
     const {user , email} = ctx;
 
+    console.log(ctx)
+
     return await prisma.file.findMany({
       where:{
         User:{

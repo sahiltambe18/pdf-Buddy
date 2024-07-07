@@ -13,7 +13,7 @@ const Provider = ({ children }: { children: ReactNode }) => {
         trpc.createClient({
             links: [
                 httpBatchLink({
-                    url: "https://pdf-buddy-next.vercel.app/"
+                    url: "https://pdf-buddy-next.vercel.app/api/trpc"
                 })
             ]
         })

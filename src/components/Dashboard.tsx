@@ -23,6 +23,9 @@ const Dashboard = () => {
 
     const { data: files, isLoading } = trpc.getUserFiles.useQuery();
 
+    
+
+    
     const deleteMsg = ({ id }: { id: string }) => {
         let flag = false;
         toast("file has been deleted", {

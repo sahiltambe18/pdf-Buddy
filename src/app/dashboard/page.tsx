@@ -7,12 +7,12 @@ import { authOptions } from "@/lib/authOptions";
 const page = async () => {
     const session = await getServerSession(authOptions)
     const callback = '/auth-callback?origin=dashboard';
-    // console.log(session);
+    // console.log("session",session);
     if(!session?.user || !session.user.email) {
         redirect(callback);
     }
 
-    const user = await getUser(session.user.email);
+    // const user = await getUser(session.user.email);
     
   return (
     <Dashboard/>
